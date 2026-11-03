@@ -14,8 +14,8 @@ const App = () => {
     <>
       <Toaster/>
       <Routes>
-        <Route path='/login' element={ <Login mode='login'/>}/>
-        <Route path='/register' element={ <Login mode='register'/>}/>
+        <Route path='/login' element={<Login mode='login' />} />
+        <Route path='/register' element={<Login mode='register' />} />
 
         <Route element={<ProtectedRoute/>}>
           <Route element={<ProtectedLayout/>}>
