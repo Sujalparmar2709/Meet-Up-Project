@@ -7,6 +7,7 @@ import Footer from './Footer'
 const ProtectedRoute = () => {
   const { isLoaded, isSignedIn } = useAuth()
   const location = useLocation()
+  const isMeetingRoute = location.pathname.startsWith('/meeting/')
 
   return (
     <>
@@ -16,8 +17,14 @@ const ProtectedRoute = () => {
         </div>
       </ClerkLoading>
       {isLoaded && isSignedIn && (
-        <div className="h-screen overflow-y-scroll bg-slate-50 text-slate-900 flex flex-col font-sans bg-[url('/layout_bg.png')] bg-cover bg-center bg-no-repeat">
-            <Navbar/>
+        <div
+          className={`h-screen overflow-y-scroll text-slate-900 flex flex-col font-sans ${
+            isMeetingRoute
+              ? 'bg-white'
+              : "bg-slate-50 bg-[url('/layout_bg.png')] bg-cover bg-center bg-no-repeat"
+          }`}
+        >
+            {!isMeetingRoute && <Navbar/>}
             <Outlet />
             <Footer/>
         </div>
