@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { dummyStats, dummyUser } from "../assets/asset";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 const Dashboard = () => {
   const user = dummyUser;
   const userName = user.fullName;
@@ -15,7 +16,6 @@ const Dashboard = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const stats = dummyStats;
-
   const [joinId, setJoinId] = useState("");
 
   useEffect(() => {
@@ -23,9 +23,32 @@ const Dashboard = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const handleCreatingMeeting = () => {};
+  const handleCreatingMeeting = () => {
+    setIsCreating(true);
+    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+    const seg = () =>
+      Array.from(
+        { length: 3 },
+        () => chars[Math.floor(Math.random() * chars.length)]
+      ).join("");
+    const newMeetingId = `${seg()}-${seg()}-${seg()}`;
 
-  const handleJoinMeeting = (e) => {};
+    setTimeout(() => {
+      setIsCreating(false);
+      toast.success("Meeting created!");
+      navigate(`/meeting/${newMeetingId}`);
+    }, 400);
+  };
+
+  const handleJoinMeeting = (e) => {
+    e.preventDefault();
+    const cleanId = joinId.trim();
+    if (!cleanId) {
+      toast.error("Please enter a valid Meeting ID");
+      return;
+    }
+    navigate(`/meeting/${cleanId}`);
+  };
 
   return (
     <div
@@ -145,6 +168,19 @@ const Dashboard = () => {
                   {stats?.plan || "Free"}
                 </span>
               </div>
+              {stats && (
+                <div className="w-full bg-white/50 rounded-2xl px-5 py-6 py-4 
+                border border-slate-100">
+                  <div className="flex items-center justify-between text-sm ">
+                    <span>Monthly Meetings</span>
+                    <span className="text-xs text-slate-600 font-mono">
+                      {stats.monthlyLimit 
+                      ? `${stats.monthlyCount} / ${stats.monthlyLimit} Used`
+                      : `${stats.monthlyCount} Created (Unlimited)`}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
