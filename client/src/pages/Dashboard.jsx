@@ -47,7 +47,7 @@ const Dashboard = () => {
       toast.error("Please enter a valid Meeting ID");
       return;
     }
-    navigate(`/meeting/${cleanId}`);
+    navigate(`/meeting/${encodeURIComponent(cleanId)}`);
   };
 
   return (
