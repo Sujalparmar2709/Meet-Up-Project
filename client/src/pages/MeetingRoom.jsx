@@ -1,28 +1,41 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { dummyMeetingDetails, dummyUser } from '../assets/asset';
 import { VideoGrid } from '../components/meeting/VideoGrid';
 import useWebRTC from '../hooks/useWebRTC';
 import ChatPanel from '../components/meeting/ChatPanel';
 import { useChat } from '../hooks/useChat';
+import ParticipantList from '../components/meeting/ParticipantList';
+import ControlBar from '../components/meeting/ControlBar';
+import toast from 'react-hot-toast';
+
 const Meetingroom = () => {
   const {meetingId} = useParams()
   const navigate = useNavigate()
   const userdata = dummyUser;
 
+  const[isParticipantsOpen, setIsParticipantsOpen] = useState(false)
+
   const handleMeetingEnded = useCallback(() =>{
+    toast.success('Meeting ended for all participants', {
+      duration: 3000,
+    })
     navigate('/dashboard')
   }, [navigate])
 
-  const{localStream, remoteUsers, audioEnabled, videoEnabled} = useWebRTC(
+  const{localStream, remoteUsers, audioEnabled, videoEnabled, toggleAudio, toggleVideo, endMeeting} = useWebRTC(
     meetingId,
     userdata,
     handleMeetingEnded)
 
   const {messages, setMessage, unreadCount, isChatOpen, toggleChat} = useChat(meetingId, userdata)
+  const isHost = userdata.id === dummyMeetingDetails.host.id
+
+
+
 
   return (
-    <div className='h-screen w-screen bg-slate-100 text-slate-900 flex flex-col
+    <div className='h-screen w-full bg-slate-100 text-slate-900 flex flex-col
     overflow-hidden relative font-sans'>
 
       <header className='w-full bg-white/90 backdrop-blur-md px-6 py-3 border-b 
@@ -49,9 +62,32 @@ const Meetingroom = () => {
         onSendMessage={setMessage}
         currentUser={userdata}/>
 
-        
-
+        <ParticipantList
+        isOpen={isParticipantsOpen}
+        onClose={() => setIsParticipantsOpen(false)}
+        localUser={userdata}
+        localAudio={audioEnabled}
+        localVideo={videoEnabled}
+        remoteUsers={remoteUsers}
+        meetingHostId={dummyUser.id}
+        />
       </div>
+        <ControlBar
+        roomId={meetingId || dummyMeetingDetails.meetingId}
+        audioEnabled={audioEnabled}
+        videoEnabled={videoEnabled}
+        onToggleAudio={toggleAudio}
+        onToggleVideo={toggleVideo}
+        onToggleChat={toggleChat}
+        onToggleParticipants={() => setIsParticipantsOpen((prev) => !prev)}
+        isChatOpen={isChatOpen}
+        isParticipantsOpen={isParticipantsOpen}
+        unreadCount={unreadCount}
+        participantCount={1 + remoteUsers.length}
+        isHost={isHost}
+        onLeave={handleMeetingEnded}
+        onEndMeeting={endMeeting}
+        />
     </div>
   )
 }

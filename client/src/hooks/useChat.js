@@ -8,14 +8,14 @@ const getMessageTime = () =>
         hour12: true,
     }).format(new Date())
 
-export const useChat = (_roomId, user) =>{
+export const useChat = (_roomId, user) => {
     const [messages, setMessages] = useState(dummyInitialChatMessages)
     const [unreadCount, setUnreadCount] = useState(0);
-    const [isChatOpen, setIsChatOpen] = useState(true)
+    const [isChatOpen, setIsChatOpen] = useState(false)
 
     const sendMessage = useCallback(
-        (text)=>{
-            if(!text.trim() || !user ) return;
+        (text) => {
+            if (!text.trim() || !user) return;
             const message = {
                 id: Date.now().toString(),
                 text: text.trim(),
@@ -27,14 +27,14 @@ export const useChat = (_roomId, user) =>{
         },
         [user]
     );
-    const toggleChat = useCallback(() =>{
-        setIsChatOpen((prev) =>{
-            if(!prev) setUnreadCount(0);
+    const toggleChat = useCallback(() => {
+        setIsChatOpen((prev) => {
+            if (!prev) setUnreadCount(0);
             return !prev;
         })
-    },[])
+    }, [])
 
-    return{
+    return {
         messages,
         setMessage: sendMessage,
         unreadCount,
