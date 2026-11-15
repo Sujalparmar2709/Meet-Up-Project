@@ -32,8 +32,6 @@ const Meetingroom = () => {
   const isHost = userdata.id === dummyMeetingDetails.host.id
 
 
-
-
   return (
     <div className='h-screen w-full bg-slate-100 text-slate-900 flex flex-col
     overflow-hidden relative font-sans'>
