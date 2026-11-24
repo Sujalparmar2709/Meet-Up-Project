@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { dummyRemoteParticipants } from '../assets/asset';
 import toast from 'react-hot-toast'
 
@@ -17,12 +17,20 @@ const useWebRTC = (_roomId, user, onMeetingEnded, _enabled = true ) => {
                     video:  true,
                     audio: true
                 })
+                const videoTrack = stream.getVideoTracks()[0]
+                if (videoTrack) videoTrack.enabled = videoEnabled
                 localStreamRef.current = stream;
                 setLocalStream(stream )
                 return stream;
             }
-        } catch (_error) {
-            console.log("Mock WebRTC: Running in camera preview fallback mode")
+            throw new Error("Camera access is not supported")
+        } catch (error) {
+            console.error("Unable to access camera or microphone:", error)
+            setVideoEnabled(false)
+            setAudioEnabled(false)
+            toast.error(error?.name === "NotAllowedError"
+                ? "Camera/microphone permission denied. Please allow access and reload."
+                : "No camera or microphone could be accessed.")
         }
         return null;
     },[]) 

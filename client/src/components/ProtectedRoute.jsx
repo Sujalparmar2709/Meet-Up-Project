@@ -1,8 +1,9 @@
 import React from 'react'
-import { ClerkLoading, useAuth } from '@clerk/react'
+import { useAuth } from '@clerk/react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import Loader from './Loader'
 
 const ProtectedRoute = () => {
   const { isLoaded, isSignedIn } = useAuth()
@@ -11,11 +12,7 @@ const ProtectedRoute = () => {
 
   return (
     <>
-      <ClerkLoading>
-        <div className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-600">
-          Loading your workspace...
-        </div>
-      </ClerkLoading>
+      {!isLoaded && <Loader text="Authenticating..." />}
       {isLoaded && isSignedIn && (
         <div
           className={`h-screen overflow-y-scroll text-slate-900 flex flex-col font-sans ${

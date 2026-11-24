@@ -5,13 +5,18 @@ import {
   PlusIcon,
   ShieldCheckIcon,
 } from "lucide-react";
-import { dummyStats, dummyUser } from "../assets/asset";
+import { dummyStats } from "../assets/asset";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useUser } from "@clerk/react";
 const Dashboard = () => {
-  const user = dummyUser;
-  const userName = user.fullName;
-  const userEmail = user.primaryEmailAddress.emailAddress;
+  const { user } = useUser();
+  const userName =
+    user?.fullName ||
+    user?.firstName ||
+    user?.primaryEmailAddress?.emailAddress?.split("@")[0] ||
+    "User";
+  const userEmail = user?.primaryEmailAddress?.emailAddress || "";
   const navigate = useNavigate();
   const [isCreating, setIsCreating] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());

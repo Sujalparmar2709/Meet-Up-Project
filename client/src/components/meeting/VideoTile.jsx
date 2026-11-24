@@ -12,23 +12,28 @@ const VideoTile = ({
   const videoRef = useRef(null)
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream || null
+    const video = videoRef.current
+    if (!video) return
+
+    video.srcObject = stream || null
+    if (stream && videoEnabled) {
+      video.play().catch(() => {})
     }
-  }, [stream])
+  }, [stream, videoEnabled])
 
   const initial = name?.charAt(0) || <UserIcon className='h-8 w-8' />
 
   return (
     <div className='relative aspect-video w-full overflow-hidden rounded-2xl border
       border-slate-700 bg-slate-950 shadow-md'>
-      {videoEnabled && stream && (
+      {videoEnabled && (
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted={isLocal}
-          className={`h-full w-full object-cover ${isLocal ? '-scale-x-100' : ''}`}
+          onLoadedMetadata={(event) => event.currentTarget.play().catch(() => {})}
+          className={`h-full w-full object-cover ${isLocal ? '-scale-x-100' : ''} ${stream ? 'opacity-100' : 'opacity-0'}`}
         />
       )}
 
