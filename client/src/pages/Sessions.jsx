@@ -47,9 +47,7 @@ const Sessions = () => {
         </div>
       )
     }
-
       <SessionDetailModal session={selectedSession} onClose={() => setSelectedSession(null)}/>
-
     </main>
   )
 }
